@@ -9,7 +9,8 @@ class PostgreSQLConnectionPoolTest {
     // TODO: change four you own tests
     @Test
     void getConnectionConfig() {
+        PostgresqlConnectionProperties properties = new PostgresqlConnectionProperties("sample", "public", "user", "password", "local", 1111);
         PostgreSQLConnectionPool postgreSQLConnectionPool= new PostgreSQLConnectionPool();
-        Assertions.assertNotNull(postgreSQLConnectionPool.getConnectionConfig());
+        Assertions.assertNotNull(postgreSQLConnectionPool.getConnectionConfig(properties));
     }
 }

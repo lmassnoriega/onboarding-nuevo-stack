@@ -1,7 +1,10 @@
 package co.com.nequi.r2dbc;
 
-import co.com.nequi.r2dbc.MyReactiveRepository;
-import co.com.nequi.r2dbc.MyReactiveRepositoryAdapter;
+import co.com.nequi.model.user.User;
+import co.com.nequi.r2dbc.adapter.UserRepositoryAdapter;
+import co.com.nequi.r2dbc.entities.UserEntity;
+import co.com.nequi.r2dbc.mapper.UserEntityMapper;
+import co.com.nequi.r2dbc.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,27 +18,26 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MyReactiveRepositoryAdapterTest {
-    // TODO: change four you own tests
 
     @InjectMocks
-    MyReactiveRepositoryAdapter repositoryAdapter;
+    UserRepositoryAdapter repositoryAdapter;
 
     @Mock
-    MyReactiveRepository repository;
-
-    @Mock
-    ObjectMapper mapper;
+    UserRepository repository;
 
     @Test
     void mustFindValueById() {
 
-        when(repository.findById("1")).thenReturn(Mono.just("test"));
-        when(mapper.map("test", Object.class)).thenReturn("test");
+        UserEntity userEntity = UserEntity.builder().id(1L).name("Jameson")
+                .lastName("Locke").email("aaaa@example.com").build();
+        User domainUser = User.builder().id(1L).name("Jameson")
+                .lastName("Locke").email("aaaa@example.com").build();
+        when(repository.findById(1L)).thenReturn(Mono.just(userEntity));
 
-        Mono<Object> result = repositoryAdapter.findById("1");
+        Mono<User> result = repositoryAdapter.getById(1L);
 
         StepVerifier.create(result)
-                .expectNextMatches(value -> value.equals("test"))
+                .expectNextMatches(value -> value.equals(domainUser))
                 .verifyComplete();
     }
 }
