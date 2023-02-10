@@ -1,14 +1,17 @@
-##Spring Configuration
 server:
   port: 8080
 spring:
   application:
-    name: Onboarding
+    name: "Onboarding"
   devtools:
     add-properties: false
   h2:
     console:
       enabled: true
-      path: /h2
+      path: "/h2"
   profiles:
-    include:
+    include: null
+adapter:
+  restconsumer:
+    timeout: 5000
+    url: "http://localhost:8080"
