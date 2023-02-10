@@ -1,12 +1,13 @@
 package co.com.nequi.consumer.response;
 
 import lombok.*;
+import lombok.extern.jackson.Jacksonized;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Jacksonized
 public class DataType {
     private Long id;
     private String first_name;
