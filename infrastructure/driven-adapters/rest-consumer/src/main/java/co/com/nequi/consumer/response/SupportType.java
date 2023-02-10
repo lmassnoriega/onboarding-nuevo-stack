@@ -1,12 +1,13 @@
 package co.com.nequi.consumer.response;
 
 import lombok.*;
+import lombok.extern.jackson.Jacksonized;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Jacksonized
 public class SupportType {
     private String url;
     private String text;

@@ -5,15 +5,15 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class BusinessException extends RuntimeException{
+public class TechnicalException extends RuntimeException{
 
     private Integer statusCode;
 
-    public BusinessException(String message) {
+    public TechnicalException(String message) {
         super(message);
     }
 
-    public BusinessException(String message, int statusCode) {
+    public TechnicalException(String message, int statusCode) {
         super(message);
         this.statusCode = statusCode;
     }
