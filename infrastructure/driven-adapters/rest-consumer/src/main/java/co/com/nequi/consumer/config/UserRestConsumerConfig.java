@@ -1,9 +1,9 @@
 package co.com.nequi.consumer.config;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.springframework.beans.factory.annotation.Value;
-import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.actuate.metrics.AutoTimer;
 import org.springframework.boot.actuate.metrics.web.reactive.client.DefaultWebClientExchangeTagsProvider;
 import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientFilterFunction;
@@ -20,7 +20,7 @@ import static io.netty.channel.ChannelOption.CONNECT_TIMEOUT_MILLIS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 @Configuration
-public class RestConsumerConfig {
+public class UserRestConsumerConfig {
 
     @Value("${adapter.restconsumer.url}")
     private String url;
@@ -28,34 +28,31 @@ public class RestConsumerConfig {
     private int timeout;
 
     @Bean
-    public WebClient getWebClient(MetricsWebClientFilterFunction metricsFilter) {
-        return WebClient.builder()
-                .baseUrl(url)
-                .filter(metricsFilter)
+    public WebClient getWebClient(
+            MetricsWebClientFilterFunction metricsFilter) {
+        return WebClient.builder().baseUrl(url).filter(metricsFilter)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                .clientConnector(getClientHttpConnector())
-                .build();
+                .clientConnector(getClientHttpConnector()).build();
     }
 
     @Bean
-    public MetricsWebClientFilterFunction webClientMetricsFilter(MeterRegistry registry) {
+    public MetricsWebClientFilterFunction webClientMetricsFilter(
+            MeterRegistry registry) {
         WebClientExchangeTagsProvider tagsProvider = new DefaultWebClientExchangeTagsProvider();
-        return new MetricsWebClientFilterFunction(registry, tagsProvider, "http-outgoing", AutoTimer.ENABLED);
+        return new MetricsWebClientFilterFunction(registry, tagsProvider,
+                "http-outgoing", AutoTimer.ENABLED);
     }
 
     private ClientHttpConnector getClientHttpConnector() {
-        /*
-        IF YO REQUIRE APPEND SSL CERTIFICATE SELF SIGNED
-        SslContext sslContext = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE)
-                .build();*/
         return new ReactorClientHttpConnector(HttpClient.create()
                 //.secure(sslContextSpec -> sslContextSpec.sslContext(sslContext))
-                .compress(true)
-                .keepAlive(true)
+                .compress(true).keepAlive(true)
                 .option(CONNECT_TIMEOUT_MILLIS, timeout)
                 .doOnConnected(connection -> {
-                    connection.addHandlerLast(new ReadTimeoutHandler(timeout, MILLISECONDS));
-                    connection.addHandlerLast(new WriteTimeoutHandler(timeout, MILLISECONDS));
+                    connection.addHandlerLast(
+                            new ReadTimeoutHandler(timeout, MILLISECONDS));
+                    connection.addHandlerLast(
+                            new WriteTimeoutHandler(timeout, MILLISECONDS));
                 }));
     }
 
